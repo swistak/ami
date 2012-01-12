@@ -1,5 +1,6 @@
 module Ami
  class Properties
+    require 'ostruct'
     attr_accessor :model, :properties
 
     def initialize(model)
@@ -232,7 +233,7 @@ module Ami
       begin
         model = mpath.
           sub(base, '').sub('.rb', '').
-          classify.constantize
+          camelize.constantize
 
         model.ancestors.include?(ActiveRecord::Base)
         model.abstract_class ? nil : model
