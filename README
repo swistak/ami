@@ -3,11 +3,18 @@ Ami
 
 Introduction goes here.
 
-
 Example
 =======
 
-Example goes here.
+> ami!
 
+TODO
+=======
+Find a way to override model generator.
+For now:
 
-Copyright (c) 2011 [name of plugin creator], released under the MIT license
+cd RAILS_ROOT
+mkdir -p lib/templates/active_record/model/
+cp {vendor/plugins/ami/,}lib/templates/active_record/model/model.rb
+
+Copyright (c) 2011 Marcin Raczkowski, released under the MIT license

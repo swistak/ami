@@ -18,7 +18,7 @@ class <%= class_name %> < <%= parent_class_name.classify %>
   "Status report" => "Declarations of boolean queries on the object state, e.g. is_empty?",
   "Element change" => "eclarations of commands that change the structure, e.g. update_count!"
 }.each do |name, description| %>
-<%= "#### %-14s - %-75s ####" % [name, description] %>
+<%= "  #### %-14s - %-75s ####" % [name, description] %>
 <% end %>
 end
 <% end -%>
