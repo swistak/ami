@@ -33,7 +33,8 @@ module Ami
       }[name] || {})
       
       defaults.merge!({
-        :string => {:limit => 255}
+        :string => {:limit => 255},
+        :boolean => {:limit => 1},
       }[type] || {})
 
       defaults
@@ -138,6 +139,8 @@ module Ami
       changes.each do |column_symbol, op, diff|
         column_name = column_symbol.to_s
 
+        next if column_name == "id"
+
         property, column = @properties[column_name], model.columns_hash[column_name]
         column ||= model.columns_hash[property.previously.to_s]
 
@@ -146,6 +149,7 @@ module Ami
           changes_up   << line(property, :prefix => "t.column", :width => width, :skip_foreign_keys => false)
           changes_down << "t.remove :#{column_name}"
         when :remove then 
+          next if [:created_at, :updated_at].include?(column_name.to_sym)
           changes_up   << "t.remove :#{column_name}"
           changes_down << line(column,   :prefix => "t.column", :width => width)
         when :change then 
@@ -170,7 +174,7 @@ module Ami
         "end"
       ])
 
-      [changes_up.present? && up, changes_down.present? && down]
+      [changes_up.compact.present? && up, changes_down.compact.present? && down]
     end
 
     def create_migration
@@ -245,7 +249,7 @@ module Ami
 
   def migration_template(name, up, down)
 <<MIGRATION
-class #{name.classify} < ActiveRecord::Migration
+class #{name.camelize} < ActiveRecord::Migration
   def self.up
 #{up.join("\n\n")}
   end
@@ -270,6 +274,7 @@ MIGRATION
       end
 
       m.reset_column_information
+      sleep 1
     end
 
     :done
@@ -302,7 +307,7 @@ MIGRATION
 
     fname = File.join(Rails.root, "db", "migrate", "#{time}_#{name}_#{lp}.rb")
     
-    File.open(fname, "w"){|f| f.write(migration_template(name, up, down).sub(name.classify, name.classify+lp.to_s)) }
+    File.open(fname, "w"){|f| f.write(migration_template(name, up, down).sub(name.camelize, name.camelize+lp.to_s)) }
 
     ar_migrate! if run
   end

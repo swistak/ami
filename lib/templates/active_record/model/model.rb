@@ -5,7 +5,7 @@ class <%= class_name %> < <%= parent_class_name.classify %>
   belongs_to :<%= attribute.name %>
 <% end -%>
 
-  column :id, :integer
+  column :id, :primary_key
 <% attributes.reject {|attr| attr.reference? }.each do |attr| -%>
   column :<%= attr.name %>, :<%= attr.type %>
 <% end -%>
